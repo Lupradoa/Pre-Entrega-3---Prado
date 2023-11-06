@@ -1,13 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laboratorio</title>
+  <title>Sistema de Reserva de Turnos</title>
 </head>
 <body>
-    <h1>Bienvenidos al registro de turnos del laboratorio</h1>
+  <h1>Sistema de Reserva de Turnos</h1>
+  <form id="addPatientForm">
+    <label for="patientName">Nombre del Paciente:</label>
+    <input type="text" id="patientName" required>
+    <label for="patientPhone">Teléfono del Paciente:</label>
+    <input type="text" id="patientPhone" required>
+    <button type="submit">Agregar Paciente</button>
+  </form>
 
-<script src="./main.js"></script>
+  <form id="addAppointmentForm">
+    <label for="appointmentPatient">Nombre del Paciente:</label>
+    <input type="text" id="appointmentPatient" required>
+    <label for="appointmentDoctor">Nombre del Médico:</label>
+    <input type="text" id="appointmentDoctor" required>
+    <label for="appointmentDate">Fecha de la Cita:</label>
+    <input type="date" id="appointmentDate" required>
+    <label for="appointmentTime">Hora de la Cita:</label>
+    <input type="time" id="appointmentTime" required>
+    <button type="submit">Programar Cita</button>
+  </form>
+
+  <div id="output"></div>
+
+  <script src="main.js"></script>
 </body>
 </html>

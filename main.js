@@ -1,4 +1,3 @@
-// Variable para llevar el registro del último turno asignado
 class Paciente {
   constructor(nombre, telefono) {
     this.nombre = nombre;
@@ -22,87 +21,64 @@ class Cita {
   }
 }
 
-const pacientes = [];
-const medicos = [];
-const citas = [];
+let pacientes = JSON.parse(localStorage.getItem('pacientes')) || [];
+let medicos = JSON.parse(localStorage.getItem('medicos')) || [];
+let citas = JSON.parse(localStorage.getItem('citas')) || [];
 
-function agregarPaciente() {
-  const nombre = prompt("Ingrese el nombre del paciente:");
-  const telefono = prompt("Ingrese el teléfono del paciente:");
-  const paciente = new Paciente(nombre, telefono);
-  pacientes.push(paciente);
-  alert("Paciente agregado exitosamente.");
+function guardarDatosEnLocalStorage() {
+  localStorage.setItem('pacientes', JSON.stringify(pacientes));
+  localStorage.setItem('medicos', JSON.stringify(medicos));
+  localStorage.setItem('citas', JSON.stringify(citas));
 }
 
-function agregarMedico() {
-  const nombre = prompt("Ingrese el nombre del médico:");
-  const especialidad = prompt("Ingrese la especialidad del médico:");
-  const medico = new Medico(nombre, especialidad);
-  medicos.push(medico);
-  alert("Médico agregado exitosamente.");
+function updateOutput() {
+  const output = document.getElementById('output');
+  output.innerHTML = '<h2>Lista de Pacientes</h2>';
+  pacientes.forEach(patient => {
+    output.innerHTML += `<p>Nombre: ${patient.nombre}, Teléfono: ${patient.telefono}</p>`;
+  });
+  
+  output.innerHTML += '<h2>Lista de Citas</h2>';
+  citas.forEach(appointment => {
+    output.innerHTML += `<p>Paciente: ${appointment.paciente.nombre}, Médico: ${appointment.medico.nombre}, Fecha: ${appointment.fecha}, Hora: ${appointment.hora}</p>`;
+  });
 }
 
-function programarCita() {
-  const pacienteNombre = prompt("Ingrese el nombre del paciente:");
-  const medicoNombre = prompt("Ingrese el nombre del médico:");
-  const fecha = prompt("Ingrese la fecha de la cita (YYYY-MM-DD):");
-  const hora = prompt("Ingrese la hora de la cita (HH:MM AM/PM):");
+document.getElementById('addPatientForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const patientName = document.getElementById('patientName').value;
+  const patientPhone = document.getElementById('patientPhone').value;
+  const newPatient = new Paciente(patientName, patientPhone);
+  pacientes.push(newPatient);
+  document.getElementById('patientName').value = '';
+  document.getElementById('patientPhone').value = '';
+  guardarDatosEnLocalStorage();
+  updateOutput();
+});
 
-  const paciente = pacientes.find(p => p.nombre === pacienteNombre);
-  const medico = medicos.find(m => m.nombre === medicoNombre);
+document.getElementById('addAppointmentForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  const appointmentPatient = document.getElementById('appointmentPatient').value;
+  const appointmentDoctor = document.getElementById('appointmentDoctor').value;
+  const appointmentDate = document.getElementById('appointmentDate').value;
+  const appointmentTime = document.getElementById('appointmentTime').value;
 
-  if (!paciente || !medico) {
+  const patient = pacientes.find(p => p.nombre === appointmentPatient);
+  const doctor = medicos.find(m => m.nombre === appointmentDoctor);
+
+  if (!patient || !doctor) {
     alert("Paciente o médico no encontrado. Verifique los nombres.");
     return;
   }
 
-  const cita = new Cita(paciente, medico, fecha, hora);
-  citas.push(cita);
-  alert("Cita programada exitosamente.");
-}
+  const newAppointment = new Cita(patient, doctor, appointmentDate, appointmentTime);
+  citas.push(newAppointment);
+  document.getElementById('appointmentPatient').value = '';
+  document.getElementById('appointmentDoctor').value = '';
+  document.getElementById('appointmentDate').value = '';
+  document.getElementById('appointmentTime').value = '';
+  guardarDatosEnLocalStorage();
+  updateOutput();
+});
 
-function buscarCitasDisponibles() {
-  const medicoNombre = prompt("Ingrese el nombre del médico:");
-  const fecha = prompt("Ingrese la fecha de la cita (YYYY-MM-DD):");
-  const hora = prompt("Ingrese la hora de la cita (HH:MM AM/PM):");
-
-  const medico = medicos.find(m => m.nombre === medicoNombre);
-
-  if (!medico) {
-    alert("Médico no encontrado. Verifique el nombre.");
-    return;
-  }
-
-  const citasDisponibles = citas.filter(cita => cita.medico === medico && cita.fecha === fecha && cita.hora === hora);
-
-  if (citasDisponibles.length > 0) {
-    alert("Citas disponibles encontradas:\n" + citasDisponibles.map(c => `Paciente: ${c.paciente.nombre}, Fecha: ${c.fecha}, Hora: ${c.hora}`).join("\n"));
-  } else {
-    alert("No hay citas disponibles para el médico, fecha y hora especificados.");
-  }
-}
-
-while (true) {
-  const opcion = prompt("Seleccione una opción:\n1. Agregar Paciente\n2. Agregar Médico\n3. Programar Cita\n4. Buscar Citas Disponibles\n5. Salir");
-
-  switch (opcion) {
-    case "1":
-      agregarPaciente();
-      break;
-    case "2":
-      agregarMedico();
-      break;
-    case "3":
-      programarCita();
-      break;
-    case "4":
-      buscarCitasDisponibles();
-      break;
-    case "5":
-      alert("¡Hasta luego!");
-      // Finalizar la ejecución del programa
-      throw new Error("Programa finalizado");
-    default:
-      alert("Opción no válida. Por favor, seleccione una opción válida.");
-  }
-}
+updateOutput();
