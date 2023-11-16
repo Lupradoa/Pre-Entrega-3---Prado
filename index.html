@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="estilo.css">
   <title>Sistema de Reserva de Turnos</title>
 </head>
 <body>
@@ -9,15 +10,20 @@
     <label for="patientName">Nombre del Paciente:</label>
     <input type="text" id="patientName" required>
     <label for="patientPhone">Teléfono del Paciente:</label>
-    <input type="text" id="patientPhone" required>
+    <input type="text" id="patientPhone" required pattern="[0-9 -()+]+" title="Ingresa solo números y caracteres comunes en números de teléfono">
     <button type="submit">Agregar Paciente</button>
   </form>
 
   <form id="addAppointmentForm">
     <label for="appointmentPatient">Nombre del Paciente:</label>
     <input type="text" id="appointmentPatient" required>
-    <label for="appointmentDoctor">Nombre del Médico:</label>
-    <input type="text" id="appointmentDoctor" required>
+    <label for="appointmentDoctor">Médico:</label>
+    <select id="appointmentDoctor" required>
+      <option value="Rodriguez">Rodriguez</option>
+      <option value="Martines">Martínes</option>
+      <option value="Perez">Perez</option>
+      <option value="Gonzalez">Gonzalez</option>
+    </select>
     <label for="appointmentDate">Fecha de la Cita:</label>
     <input type="date" id="appointmentDate" required>
     <label for="appointmentTime">Hora de la Cita:</label>

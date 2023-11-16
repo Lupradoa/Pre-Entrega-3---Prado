@@ -44,6 +44,13 @@ function updateOutput() {
   });
 }
 
+// Event listener para el campo de teléfono del paciente
+document.getElementById('patientPhone').addEventListener('input', function (event) {
+  const inputValue = event.target.value;
+  const sanitizedValue = inputValue.replace(/[^0-9 -()+]/g, '');
+  event.target.value = sanitizedValue;
+});
+
 document.getElementById('addPatientForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const patientName = document.getElementById('patientName').value;
@@ -63,18 +70,23 @@ document.getElementById('addAppointmentForm').addEventListener('submit', (event)
   const appointmentDate = document.getElementById('appointmentDate').value;
   const appointmentTime = document.getElementById('appointmentTime').value;
 
-  const patient = pacientes.find(p => p.nombre === appointmentPatient);
-  const doctor = medicos.find(m => m.nombre === appointmentDoctor);
-
-  if (!patient || !doctor) {
-    alert("Paciente o médico no encontrado. Verifique los nombres.");
+  if (pacientes.length === 0) {
+    alert("Primero debes agregar pacientes antes de programar una cita.");
     return;
   }
+
+  const patient = pacientes.find(p => p.nombre === appointmentPatient);
+
+  if (!patient) {
+    alert("Paciente no encontrado. Verifica el nombre.");
+    return;
+  }
+
+  const doctor = new Medico(appointmentDoctor, ''); // Creamos un médico con la especialidad vacía
 
   const newAppointment = new Cita(patient, doctor, appointmentDate, appointmentTime);
   citas.push(newAppointment);
   document.getElementById('appointmentPatient').value = '';
-  document.getElementById('appointmentDoctor').value = '';
   document.getElementById('appointmentDate').value = '';
   document.getElementById('appointmentTime').value = '';
   guardarDatosEnLocalStorage();
