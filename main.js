@@ -37,14 +37,13 @@ function updateOutput() {
   pacientes.forEach(patient => {
     output.innerHTML += `<p>Nombre: ${patient.nombre}, Teléfono: ${patient.telefono}</p>`;
   });
-  
+
   output.innerHTML += '<h2>Lista de Citas</h2>';
   citas.forEach(appointment => {
     output.innerHTML += `<p>Paciente: ${appointment.paciente.nombre}, Médico: ${appointment.medico.nombre}, Fecha: ${appointment.fecha}, Hora: ${appointment.hora}</p>`;
   });
 }
 
-// Event listener para el campo de teléfono del paciente
 document.getElementById('patientPhone').addEventListener('input', function (event) {
   const inputValue = event.target.value;
   const sanitizedValue = inputValue.replace(/[^0-9 -()+]/g, '');
@@ -61,6 +60,12 @@ document.getElementById('addPatientForm').addEventListener('submit', (event) => 
   document.getElementById('patientPhone').value = '';
   guardarDatosEnLocalStorage();
   updateOutput();
+
+  Swal.fire({
+    icon: 'success',
+    title: 'Paciente Agregado',
+    text: 'El paciente ha sido agregado exitosamente.',
+  });
 });
 
 document.getElementById('addAppointmentForm').addEventListener('submit', (event) => {
@@ -71,18 +76,27 @@ document.getElementById('addAppointmentForm').addEventListener('submit', (event)
   const appointmentTime = document.getElementById('appointmentTime').value;
 
   if (pacientes.length === 0) {
-    alert("Primero debes agregar pacientes antes de programar una cita.");
+    // Muestra una alerta de SweetAlert
+    Swal.fire({
+      icon: 'warning',
+      title: 'Advertencia',
+      text: 'Primero debes agregar pacientes antes de programar una cita.',
+    });
     return;
   }
 
   const patient = pacientes.find(p => p.nombre === appointmentPatient);
 
   if (!patient) {
-    alert("Paciente no encontrado. Verifica el nombre.");
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Paciente no encontrado. Verifica el nombre.',
+    });
     return;
   }
 
-  const doctor = new Medico(appointmentDoctor, ''); // Creamos un médico con la especialidad vacía
+  const doctor = new Medico(appointmentDoctor, ''); 
 
   const newAppointment = new Cita(patient, doctor, appointmentDate, appointmentTime);
   citas.push(newAppointment);
@@ -91,6 +105,13 @@ document.getElementById('addAppointmentForm').addEventListener('submit', (event)
   document.getElementById('appointmentTime').value = '';
   guardarDatosEnLocalStorage();
   updateOutput();
+
+  
+  Swal.fire({
+    icon: 'success',
+    title: 'Cita Programada',
+    text: 'La cita ha sido programada exitosamente.',
+  });
 });
 
 updateOutput();
